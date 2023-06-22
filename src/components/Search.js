@@ -3,7 +3,9 @@ import axios from "axios";
 import { Input, FormGroup,Col } from "reactstrap";
 
 export default function Search({ setPokemons, setAll, all }) {
+  
   const [name, setName] = React.useState("");
+  const [debounce,setDebounce] = React.useState("");
 
   React.useEffect(() => {
 
@@ -17,6 +19,13 @@ export default function Search({ setPokemons, setAll, all }) {
     func();
 
   }, []);
+
+  React.useEffect(()=>{
+    const timeoutId = setTimeout(()=>{
+      setName(debounce);
+    },500)
+    return ()=>clearInterval(timeoutId);
+  },[debounce])
 
   React.useEffect(() => {
     const fetchPokes = async () => {
@@ -52,6 +61,10 @@ export default function Search({ setPokemons, setAll, all }) {
     }
   }, [all, name]); // adding dependency of all pokemon names fetched and user input
 
+  const handleDebounce = (e) => {
+    setDebounce(e.target.value);
+  }
+
   return (
     <>
       <div>
@@ -61,10 +74,10 @@ export default function Search({ setPokemons, setAll, all }) {
         </Col>
          <Col sm={10}>
           <Input // search bar
-            value={name}
+            value={debounce}
             placeholder="please enter Pokemon Name (atleast 3 characters)"
             onChange={(e) => {
-              setName(e.target.value);
+              handleDebounce(e);
             }}
           />
         </Col>
